@@ -10,9 +10,31 @@ The Suricata tool monitors network interfaces and applies rules to the packets t
 
 
 ## Task 1. Examine a custom rule in Suricata
-The /home/analyst directory contains a custom.rules file that defines the network traffic rules, which Suricata captures.
+The `/home/analyst` directory contains a `custom.rules` file that defines the network traffic rules, which Suricata captures.
+Explore the composition of the Suricata rule defined in the `custom.rules` file.
+  + Use the `cat` command to display the rule in the custom.rules file:
+```
+cat custom.rules
+```
+The command returns the rule as the output in the shell:
 
 
+```
+alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"GET on wire";
+flow:established,to_server; content:"GET";
+http_method; sid:12345; rev:3;)
+
+```
+Let's examine each component of this rule. It has an action, a header, and rule options.
+#### 1. action:
+    + The action is the first part of the signature. It determines the action to take if all conditions are met.
+> [!IMPORTANT]
+> + Actions differ across network intrusion detection system (NIDS) rule languages, but some common actions are `alert, drop, pass,` and `reject`.
+> + Using our example, the file contains a single `alert` as the action. The `alert` keyword instructs to alert on selected network traffic. The IDS will inspect the traffic packets and send out an alert in case it matches.
+> + Note that the `drop` action also generates an alert, but it drops the traffic. A `drop` action only occurs when Suricata runs in IPS mode.
+> + The `pass` action allows the traffic to pass through the network interface. The pass rule can be used to override other rules. An exception to a drop rule can be made with a pass rule. For example, the following rule has an identical signature to the previous example, except that it singles out a specific IP address to allow only traffic from that address to pass:
+> + eg. ```pass http 172.17.0.77 any -> $EXTERNAL_NET any (msg:"BAD USER-AGENT";flow:established,to_server;content:!”Mozilla/5.0”; http_user_agent; sid: 12365; rev:1;)```
+> + The `reject` action does not allow the traffic to pass. Instead, a TCP reset packet will be sent, and Suricata will drop the matching packet. A TCP reset packet tells computers to stop sending messages to each other.
 
 
 
