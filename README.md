@@ -230,9 +230,9 @@ Output result belo:
 jq "select(.flow_id==X)" /var/log/suricata/eve.json
 ```
 > [!Note]
-> A network flow refers to a sequence of packets between a source and destination that share common characteristics such as IP addresses, protocols, and more.
-> In cybersecurity, network traffic flows help analysts understand the behavior of network traffic to identify and analyze threats. Suricata assigns a unique `flow_id` to each network flow. All logs from a network flow share the same `flow_id`.
-> This makes the `flow_id` field a useful field for correlating network traffic that belongs to the same network flows.
+> + A network flow refers to a sequence of packets between a source and destination that share common characteristics such as IP addresses, protocols, and more.
+> + In cybersecurity, network traffic flows help analysts understand the behavior of network traffic to identify and analyze threats. Suricata assigns a unique `flow_id` to each network flow. All logs from a network flow share the same `flow_id`.
+> + This makes the `flow_id` field a useful field for correlating network traffic that belongs to the same network flows.
 ```
 aanalyst@0fde164ce18d:~$ jq "select(.flow_id==1939457247443093)" /var/log/suricata/eve.json
 {
