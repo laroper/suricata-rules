@@ -65,9 +65,28 @@ Let's examine each component of this rule from the output above. It has an `acti
 > + The `rev:3` option indicates the signature's revision which is used to identify the signature's version. Here, the revision version is 3.
 > + To summarize, this signature triggers an alert whenever Suricata observes the text `GET` as the HTTP method in an HTTP packet from the home network going to the external network.
 
+## Task 2. Trigger a custom rule in Suricata
 
+Now that we are familiar with the composition of the custom Suricata rule, you must trigger this rule and examine the alert logs that Suricata generates.
+1. List the files in the `/var/log/suricata` folder by running the command `ls -l /var/log/suricata`
+```
+analyst@6e92b5f119af:~$ ls -l /var/log/suricata
+total 0
+```
+> [!Note]
+> In the output above, note that before running Suricata, there are no files in the /var/log/suricata directory.
 
-
+2. Run `suricata` using the `custom.rules` and `sample.pcap` files:
+```
+sudo suricata -r sample.pcap -S custom.rules -k none
+```
+We get the following output:
+```
+4/6/2024 -- 20:49:16 - <Notice> - This is Suricata version 4.1.2 RELEASE
+4/6/2024 -- 20:49:17 - <Notice> - all 2 packet processing threads, 4 management threads initialized, engine started.
+4/6/2024 -- 20:49:17 - <Notice> - Signal Received.  Stopping engine.
+4/6/2024 -- 20:49:19 - <Notice> - Pcap-file module read 1 files, 200 packets, 54238 bytes
+```
 
 
 
