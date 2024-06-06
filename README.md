@@ -139,7 +139,83 @@ analyst@6e92b5f119af:~$ cat /var/log/suricata/eve.json
 ``` 
 + The output returns the raw content of the file. You'll notice that there is a lot of data returned that is not easy to understand in this format.
 
+2. Use the `jq` command to display the entries in an improved format:
+```
+jq . /var/log/suricata/eve.json | less
+```
+The Command outputs
+```
+analyst@6e92b5f119af:~$ jq . /var/log/suricata/eve.json | less
+{
+  "timestamp": "2022-11-23T12:38:34.624866+0000",
+  "flow_id": 175267218356373,
+  "pcap_cnt": 70,
+  "event_type": "alert",
+  "src_ip": "172.21.224.2",
+  "src_port": 49652,
+  "dest_ip": "142.250.1.139",
+  "dest_port": 80,
+  "proto": "TCP",
+  "tx_id": 0,
+  "alert": {
+    "action": "allowed",
+    "gid": 1,
+    "signature_id": 12345,
+    "rev": 3,
+    "signature": "GET on wire",
+    "category": "",
+    "severity": 3
+  },
+  "http": {
+    "hostname": "opensource.google.com",
+    "url": "/",
+    "http_user_agent": "curl/7.74.0",
+    "http_content_type": "text/html",
+    "http_method": "GET",
+    "protocol": "HTTP/1.1",
+    "status": 301,
+    "redirect": "https://opensource.google/",
+    "length": 223
+  },
+  "app_proto": "http",
+  "flow": {
+    "pkts_toserver": 4,
+    "pkts_toclient": 3,
+    "bytes_toserver": 357,
+    "bytes_toclient": 788,
+    "start": "2022-11-23T12:38:34.620693+0000"
+  }
+}
+{
+  "timestamp": "2022-11-23T12:38:58.958203+0000",
+  "flow_id": 1163829105038580,
+  "pcap_cnt": 151,
+```
+> [!Note] 
+> + You can use the lowercase f and b keys to move forward or backward through the output. Also, if you enter a command incorrectly and it fails to return to the command-line prompt, you can press CTRL+C to stop the process and force the shell to return to the command-line prompt.
+> + Press Q to exit the less command and to return to the command-line prompt.
+> + The jq tool is very useful for processing JSON data - For more on `jq` - <a href='https://www.baeldung.com/linux/jq-command-json'>Guide to Linux jq Command for JSON processing</a>
 
+3. Use the `jq` command to extract specific event data from the eve.json file:
+```
+jq -c "[.timestamp,.flow_id,.alert.signature,.proto,.dest_ip]" /var/log/suricata/eve.json
+```
+Output result belo:
+```
+["2022-11-23T12:38:34.624866+0000",175267218356373,"GET on wire","TCP","142.250.1.139"]
+["2022-11-23T12:38:58.958203+0000",1163829105038580,"GET on wire","TCP","142.250.1.102"]
+```
+> [!Note]
+> The jq command above extracts the fields specified in the list in the square brackets from the JSON payload. The fields selected are the timestamp (.timestamp), the flow id (.flow_id), the alert signature or msg (.alert.signature), the protocol (.proto), and the destination IP address (.dest_ip).
+
+4. Use the jq command to display all event logs related to a specific flow_id from the eve.json file. The flow_id value is a 16-digit number and will vary for each of the log entries. Replace X with any of the flow_id values returned by the previous query:
+jq "select(.flow_id==X)" /var/log/suricata/eve.json
+Note:  A network flow refers to a sequence of packets between a source and destination that share common characteristics such as IP addresses, protocols, and more. In cybersecurity, network traffic flows help analysts understand the behavior of network traffic to identify and analyze threats. Suricata assigns a unique flow_id to each network flow. All logs from a network flow share the same flow_id. This makes the flow_id field a useful field for correlating network traffic that belongs to the same network flows. 
+analyst@6e92b5f119af:~$ analyst@6e92b5f119af:~$ jq -c "[.timestamp,.flow_id,.alert.signature,.proto,.dest_ip]" /var/log/suricata/eve.json
+-bash: analyst@6e92b5f119af:~$: command not found
+analyst@6e92b5f119af:~$ ["2022-11-23T12:38:34.624866+0000",175267218356373,"GET on wire","TCP","142.250.1.139"]
+-bash: [2022-11-23T12:38:34.624866+0000,175267218356373,GET on wire,TCP,142.250.1.139]: command not found
+analyst@6e92b5f119af:~$ ["2022-11-23T12:38:58.958203+0000",1163829105038580,"GET on wire","TCP","142.250.1.102"]
 
 
 
